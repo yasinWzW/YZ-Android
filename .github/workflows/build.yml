@@ -80,8 +80,8 @@ jobs:
                   applicationId 'com.yzalive.app.preview'
                   minSdk 24
                   targetSdk 35
-                  versionCode 1
-                  versionName '1.0-preview'
+                  versionCode 2
+                  versionName '1.0.1-preview'
               }
           }
 
@@ -109,6 +109,7 @@ jobs:
                   android:allowBackup="false"
                   android:usesCleartextTraffic="false"
                   android:supportsRtl="true"
+                  android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
                   android:theme="@android:style/Theme.Translucent.NoTitleBar">
 
                   <meta-data
@@ -116,7 +117,25 @@ jobs:
                       android:resource="@string/asset_statements"/>
 
                   <activity
+                      android:name="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
+                      android:exported="false"
+                      android:enabled="true"
+                      android:excludeFromRecents="true">
+
+                      <meta-data
+                          android:name="android.support.customtabs.trusted.MANAGE_SPACE_URL"
+                          android:value="https://yzalive.com/"/>
+
+                      <intent-filter>
+                          <action android:name="android.intent.action.APPLICATION_PREFERENCES"/>
+                          <category android:name="android.intent.category.DEFAULT"/>
+                      </intent-filter>
+
+                  </activity>
+
+                  <activity
                       android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
+                      android:alwaysRetainTaskState="true"
                       android:exported="true">
 
                       <meta-data
@@ -163,6 +182,13 @@ jobs:
           "$ANDROID_HOME/build-tools/35.0.0/apksigner" \
             verify --print-certs output/YZ-ALIVE-Preview.apk \
             > output/certificate.txt
+
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" \
+            dump xmltree output/YZ-ALIVE-Preview.apk AndroidManifest.xml \
+            > output/manifest-check.txt
+
+          grep -q "com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity" \
+            output/manifest-check.txt
 
           cat output/certificate.txt
           sha256sum output/YZ-ALIVE-Preview.apk
