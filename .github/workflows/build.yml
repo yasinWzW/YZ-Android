@@ -25,6 +25,9 @@ jobs:
         with:
           gradle-version: '8.13'
 
+      - name: Setup Android SDK
+        uses: android-actions/setup-android@v4
+
       - name: Prepare Android SDK
         run: |
           sdkmanager "platforms;android-36" "build-tools;35.0.0"
@@ -71,6 +74,7 @@ jobs:
           android {
               namespace 'com.yzalive.app.preview'
               compileSdk 36
+              buildToolsVersion '35.0.0'
 
               defaultConfig {
                   applicationId 'com.yzalive.app.preview'
@@ -131,9 +135,11 @@ jobs:
                           <action android:name="android.intent.action.MAIN"/>
                           <category android:name="android.intent.category.LAUNCHER"/>
                       </intent-filter>
+
                   </activity>
 
-                  <activity android:name="com.google.androidbrowserhelper.trusted.FocusActivity"
+                  <activity
+                      android:name="com.google.androidbrowserhelper.trusted.FocusActivity"
                       android:exported="false"/>
 
               </application>
@@ -167,3 +173,4 @@ jobs:
           name: YZ-ALIVE-Android
           path: output/
           retention-days: 7
+          if-no-files-found: error
